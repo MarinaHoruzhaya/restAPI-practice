@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="in.reqres.ReqresInTests" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-10-01T19:35:12" hostname="WIN-2IIN7F880J6" time="4.192">
+  <properties/>
+  <testcase name="LIST USERS" classname="in.reqres.ReqresInTests" time="2.444"/>
+  <testcase name="UPDATE" classname="in.reqres.ReqresInTests" time="0.502"/>
+  <testcase name="LOGIN-SUCCESSFUL" classname="in.reqres.ReqresInTests" time="0.421"/>
+  <testcase name="SINGLE USER NOT FOUND" classname="in.reqres.ReqresInTests" time="0.336"/>
+  <testcase name="REGISTER-UNSUCCESSFUL" classname="in.reqres.ReqresInTests" time="0.484"/>
+  <system-out><![CDATA[Request URI:	https://reqres.in/api/users?page=2
+Request method:	GET
+Body:			<none>
+HTTP/1.1 200 OK
+{
+    "page": 2,
+    "per_page": 6,
+    "total": 12,
+    "total_pages": 2,
+    "data": [
+        {
+            "id": 7,
+            "email": "michael.lawson@reqres.in",
+            "first_name": "Michael",
+            "last_name": "Lawson",
+            "avatar": "https://reqres.in/img/faces/7-image.jpg"
+        },
+        {
+            "id": 8,
+            "email": "lindsay.ferguson@reqres.in",
+            "first_name": "Lindsay",
+            "last_name": "Ferguson",
+            "avatar": "https://reqres.in/img/faces/8-image.jpg"
+        },
+        {
+            "id": 9,
+            "email": "tobias.funke@reqres.in",
+            "first_name": "Tobias",
+            "last_name": "Funke",
+            "avatar": "https://reqres.in/img/faces/9-image.jpg"
+        },
+        {
+            "id": 10,
+            "email": "byron.fields@reqres.in",
+            "first_name": "Byron",
+            "last_name": "Fields",
+            "avatar": "https://reqres.in/img/faces/10-image.jpg"
+        },
+        {
+            "id": 11,
+            "email": "george.edwards@reqres.in",
+            "first_name": "George",
+            "last_name": "Edwards",
+            "avatar": "https://reqres.in/img/faces/11-image.jpg"
+        },
+        {
+            "id": 12,
+            "email": "rachel.howell@reqres.in",
+            "first_name": "Rachel",
+            "last_name": "Howell",
+            "avatar": "https://reqres.in/img/faces/12-image.jpg"
+        }
+    ],
+    "support": {
+        "url": "https://reqres.in/#support-heading",
+        "text": "To keep ReqRes free, contributions towards server costs are appreciated!"
+    }
+}
+Request URI:	https://reqres.in/api/users/2
+Request method:	PUT
+Body:
+{
+    "name": "morpheus",
+    "job": "zion resident"
+}
+HTTP/1.1 200 OK
+{
+    "name": "morpheus",
+    "job": "zion resident",
+    "updatedAt": "2023-10-01T19:35:15.632Z"
+}
+Request URI:	https://reqres.in/api/login
+Request method:	POST
+Body:
+{
+    "email": "eve.holt@reqres.in",
+    "password": "cityslicka"
+}
+HTTP/1.1 200 OK
+{
+    "token": "QpwL5tke4Pnpja7X4"
+}
+Request URI:	https://reqres.in/api/users/23
+Request method:	GET
+Body:			<none>
+HTTP/1.1 404 Not Found
+{
+    
+}
+Request URI:	https://reqres.in/api/register
+Request method:	POST
+Body:
+{
+    "email": "sydney@fife"
+}
+HTTP/1.1 400 Bad Request
+{
+    "error": "Missing password"
+}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
