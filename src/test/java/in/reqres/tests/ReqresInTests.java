@@ -1,13 +1,13 @@
-package in.reqres;
+package in.reqres.tests;
 
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 
-public class ReqresInTests extends TestBase{
+public class ReqresInTests extends TestBase {
 
     @DisplayName("LOGIN-SUCCESSFUL")
     @Test
@@ -103,4 +103,6 @@ public class ReqresInTests extends TestBase{
                 .statusCode(400)
                 .body("error", is("Missing password"));
     }
+
+
 }
