@@ -3,7 +3,7 @@ package in.reqres.models;
 import lombok.Data;
 
 @Data
-public class RegisterResponseLombokModel {
+public class RegisterResponseModel {
     String error;
 
 }

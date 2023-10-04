@@ -1,11 +1,13 @@
 package in.reqres.tests;
 
 import in.reqres.models.*;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static in.reqres.helpers.CustomAllureListener.withCustomTemplates;
+import java.util.List;
+
+import static in.reqres.specs.ListUserSpec.listUserRequestSpec;
+import static in.reqres.specs.ListUserSpec.listUserResponseSpec;
 import static in.reqres.specs.LoginSpec.loginRequestSpec;
 import static in.reqres.specs.LoginSpec.loginResponseSpec;
 import static in.reqres.specs.RegisterSpec.registerRequestSpec;
@@ -16,26 +18,26 @@ import static in.reqres.specs.UserSpec.userRequestSpec;
 import static in.reqres.specs.UserSpec.userResponseSpec;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ReqresInTests extends TestBase{
 
     @DisplayName("LOGIN-SUCCESSFUL")
     @Test
     void successfulLoginTest() {
-        LoginBodyLombokModel authData = new LoginBodyLombokModel();
+        LoginBodyModel authData = new LoginBodyModel();
         authData.setEmail("eve.holt@reqres.in");
         authData.setPassword("cityslicka");
 
-        LoginResponseLombokModel response = step("Make login request", () ->
+        LoginResponseModel response = step("Make login request", () ->
                 given(loginRequestSpec)
                 .body(authData)
                 .when()
                 .post("/login")
                 .then()
                 .spec(loginResponseSpec)
-                .extract().as(LoginResponseLombokModel.class));
+                .extract().as(LoginResponseModel.class));
 
         step("verify response", () ->
         assertEquals("QpwL5tke4Pnpja7X4",response.getToken()));
@@ -45,37 +47,50 @@ public class ReqresInTests extends TestBase{
     @Test
     void getListUsers() {
 
-        given()
-                .log().uri()
-                .log().method()
-                .log().body()
-                .when()
-                .get("/users?page=2")
-                .then()
-                .log().status()
-                .log().body()
-                .statusCode(200)
-                .body("page",is(2))
-                .body("per_page",is(6))
-                .body("total_pages",is(2))
-                .body("total",is(12));
+        ListUsersResponseModel response = step("Make list users request", () ->
+                given(listUserRequestSpec)
+                        .when()
+                        .get("/users?page=2")
+                        .then()
+                        .spec(listUserResponseSpec)
+                        .extract().as(ListUsersResponseModel.class));
+
+        step("Verify common results about page", () -> {
+            assertEquals(2, response.getPage());
+            assertEquals(6, response.getPerPage());
+            assertEquals(12, response.getTotal());
+            assertEquals(2, response.getTotalPages());
+        });
+        step("Verify information about the second user", () -> {
+            List<ListUserDataResponseModel> data = response.getData();
+            assertEquals(8, data.get(1).getId());
+            assertEquals("lindsay.ferguson@reqres.in", data.get(1).getEmail());
+            assertEquals("Lindsay", data.get(1).getFirstName());
+            assertEquals("Ferguson", data.get(1).getLastName());
+            assertEquals("https://reqres.in/img/faces/8-image.jpg", data.get(1).getAvatar());
+        });
+        step("Verify information about support", () -> {
+            ListUsersSupportResponseModel support = response.getSupport();
+            assertEquals("https://reqres.in/#support-heading", support.getUrl());
+            assertEquals("To keep ReqRes free, contributions towards server costs are appreciated!", support.getText());
+        });
     }
 
     @DisplayName("UPDATE")
     @Test
     void putUpdateTest() {
-        UpdateBodyLombokModel authData = new UpdateBodyLombokModel();
+        UpdateBodyModel authData = new UpdateBodyModel();
         authData.setName("morpheus");
-        authData.setName("zion resident");
+        authData.setJob("zion resident");
 
-        UpdateResponseLombokModel response = step("Make update request", () ->
+        UpdateResponseModel response = step("Make update request", () ->
         given(updateRequestSpec)
                 .body(authData)
                 .when()
                 .put("/users/2")
                 .then()
                 .spec(updateResponseSpec)
-                .extract().as(UpdateResponseLombokModel.class));
+                .extract().as(UpdateResponseModel.class));
 
         step("Verify Results", () -> {
             assertEquals("morpheus", response.getName());
@@ -83,7 +98,7 @@ public class ReqresInTests extends TestBase{
         });
     }
 
-    @DisplayName("CREATE") // №1
+    @DisplayName("CREATE")
     @Test
     void createUser(){
 
@@ -92,20 +107,17 @@ public class ReqresInTests extends TestBase{
         authDate.setJob("leader");
 
         UserResponseModel response = step("Make user request", () ->
-        given()
-                .filter(withCustomTemplates())
-                .spec(userRequestSpec)
+        given(userRequestSpec)
+                .body(authDate)
                 .when()
-                .get("/users?page=2")
+                .post("/users")
                 .then()
                 .spec(userResponseSpec)
                 .extract().as(UserResponseModel.class));
 
         step("Verify", () -> {
-            assertEquals("morpheus", response.getName());
-            assertEquals("leader", response.getJob());
-            assertEquals(60, response.getId());
-            assertEquals("2023-10-03T18:48:28.915Z", response.getTime());
+           assertNotNull(response.getId());
+           assertNotNull(response.getCreatedAt());
         });
 
     }
@@ -113,17 +125,17 @@ public class ReqresInTests extends TestBase{
     @DisplayName("REGISTER-UNSUCCESSFUL")
     @Test
     void successfulRegister(){
-        RegisterBodyLombokModel authData = new RegisterBodyLombokModel();
+        RegisterBodyModel authData = new RegisterBodyModel();
         authData.setEmail("sydney@fife");
 
-        RegisterResponseLombokModel response = step("Make request", () ->
+        RegisterResponseModel response = step("Make request", () ->
         given(registerRequestSpec)
                 .body(authData)
                 .when()
                 .post("/register")
                 .then()
                 .spec(registerResponseSpec)
-                .extract().as(RegisterResponseLombokModel.class));
+                .extract().as(RegisterResponseModel.class));
 
         assertEquals("Missing email or username", response.getError());
     }

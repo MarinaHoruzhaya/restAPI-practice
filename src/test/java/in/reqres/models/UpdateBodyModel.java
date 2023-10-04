@@ -3,6 +3,7 @@ package in.reqres.models;
 import lombok.Data;
 
 @Data
-public class UpdateResponseLombokModel {
+public class UpdateBodyModel {
+
     String name, job;
 }

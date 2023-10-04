@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class UserResponseModel {
-    String name, job;
-    Integer id;
-    LocalDateTime time;
+    private String createdAt;
+    private int id;
+
 
 }
