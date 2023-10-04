@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static in.reqres.specs.CreateSpec.*;
 import static in.reqres.specs.ListUserSpec.listUserRequestSpec;
 import static in.reqres.specs.ListUserSpec.listUserResponseSpec;
 import static in.reqres.specs.LoginSpec.loginRequestSpec;
@@ -14,8 +15,6 @@ import static in.reqres.specs.RegisterSpec.registerRequestSpec;
 import static in.reqres.specs.RegisterSpec.registerResponseSpec;
 import static in.reqres.specs.UpdateSpec.updateRequestSpec;
 import static in.reqres.specs.UpdateSpec.updateResponseSpec;
-import static in.reqres.specs.UserSpec.userRequestSpec;
-import static in.reqres.specs.UserSpec.userResponseSpec;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,18 +101,18 @@ public class ReqresInTests extends TestBase{
     @Test
     void createUser(){
 
-        UserBodyModel authDate = new UserBodyModel();
+        CreateBodyModel authDate = new CreateBodyModel();
         authDate.setName("morpheus");
         authDate.setJob("leader");
 
-        UserResponseModel response = step("Make user request", () ->
-        given(userRequestSpec)
+        CreateResponseModel response = step("Make user request", () ->
+        given(createUserRequestSpec)
                 .body(authDate)
                 .when()
                 .post("/users")
                 .then()
-                .spec(userResponseSpec)
-                .extract().as(UserResponseModel.class));
+                .spec(createUserResponseSpec)
+                .extract().as(CreateResponseModel.class));
 
         step("Verify", () -> {
            assertNotNull(response.getId());

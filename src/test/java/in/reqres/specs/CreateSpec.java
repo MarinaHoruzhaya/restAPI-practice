@@ -8,15 +8,15 @@ import io.restassured.specification.ResponseSpecification;
 import static in.reqres.helpers.CustomAllureListener.withCustomTemplates;
 import static io.restassured.RestAssured.with;
 
-public class UserSpec {
+public class CreateSpec {
 
-    public static RequestSpecification userRequestSpec = with()
+    public static RequestSpecification createUserRequestSpec = with()
             .filter(withCustomTemplates())
             .log().uri()
             .log().method()
             .log().body();
 
-    public static ResponseSpecification userResponseSpec = new ResponseSpecBuilder()
+    public static ResponseSpecification createUserResponseSpec = new ResponseSpecBuilder()
             .log(LogDetail.STATUS)
             .log(LogDetail.BODY)
             .expectStatusCode(201)
