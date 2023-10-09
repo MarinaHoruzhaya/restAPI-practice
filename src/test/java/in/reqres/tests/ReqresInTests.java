@@ -6,19 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static in.reqres.specs.CreateSpec.*;
-import static in.reqres.specs.ListUserSpec.listUserRequestSpec;
-import static in.reqres.specs.ListUserSpec.listUserResponseSpec;
-import static in.reqres.specs.LoginSpec.loginRequestSpec;
-import static in.reqres.specs.LoginSpec.loginResponseSpec;
-import static in.reqres.specs.RegisterSpec.registerRequestSpec;
-import static in.reqres.specs.RegisterSpec.registerResponseSpec;
-import static in.reqres.specs.UpdateSpec.updateRequestSpec;
-import static in.reqres.specs.UpdateSpec.updateResponseSpec;
+import static in.reqres.specs.UserSpecs.*;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.*;
 
 public class ReqresInTests extends TestBase{
 
@@ -30,16 +23,16 @@ public class ReqresInTests extends TestBase{
         authData.setPassword("cityslicka");
 
         LoginResponseModel response = step("Make login request", () ->
-                given(loginRequestSpec)
+                given(requestSpec)
                 .body(authData)
                 .when()
                 .post("/login")
                 .then()
-                .spec(loginResponseSpec)
+                .spec(responseSpec)
                 .extract().as(LoginResponseModel.class));
 
         step("verify response", () ->
-        assertEquals("QpwL5tke4Pnpja7X4",response.getToken()));
+                assertThat(response.getToken()).isEqualTo("QpwL5tke4Pnpja7X4"));
     }
 
     @DisplayName("LIST USERS")
@@ -47,53 +40,55 @@ public class ReqresInTests extends TestBase{
     void getListUsers() {
 
         ListUsersResponseModel response = step("Make list users request", () ->
-                given(listUserRequestSpec)
+                given(requestSpec)
                         .when()
                         .get("/users?page=2")
                         .then()
-                        .spec(listUserResponseSpec)
+                        .spec(responseSpec)
                         .extract().as(ListUsersResponseModel.class));
 
         step("Verify common results about page", () -> {
-            assertEquals(2, response.getPage());
-            assertEquals(6, response.getPerPage());
-            assertEquals(12, response.getTotal());
-            assertEquals(2, response.getTotalPages());
+            assertThat(response.getPage()).isEqualTo(2);
+            assertThat(response.getPerPage()).isEqualTo(6);
+            assertThat(response.getTotal()).isEqualTo(12);
+            assertThat(response.getTotalPages()).isEqualTo(2);
         });
+
         step("Verify information about the second user", () -> {
             List<ListUserDataResponseModel> data = response.getData();
-            assertEquals(8, data.get(1).getId());
-            assertEquals("lindsay.ferguson@reqres.in", data.get(1).getEmail());
-            assertEquals("Lindsay", data.get(1).getFirstName());
-            assertEquals("Ferguson", data.get(1).getLastName());
-            assertEquals("https://reqres.in/img/faces/8-image.jpg", data.get(1).getAvatar());
+            assertThat(data.get(1).getId()).isEqualTo(8);
+            assertThat(data.get(1).getEmail()).isEqualTo("lindsay.ferguson@reqres.in");
+            assertThat(data.get(1).getFirstName()).isEqualTo("Lindsay");
+            assertThat(data.get(1).getLastName()).isEqualTo("Ferguson");
+            assertThat(data.get(1).getAvatar()).isEqualTo("https://reqres.in/img/faces/8-image.jpg");
         });
+
         step("Verify information about support", () -> {
             ListUsersSupportResponseModel support = response.getSupport();
-            assertEquals("https://reqres.in/#support-heading", support.getUrl());
-            assertEquals("To keep ReqRes free, contributions towards server costs are appreciated!", support.getText());
+            assertThat(support.getUrl()).isEqualTo("https://reqres.in/#support-heading");
+            assertThat(support.getText()).isEqualTo("To keep ReqRes free, contributions towards server costs are appreciated!");
         });
     }
 
     @DisplayName("UPDATE")
     @Test
     void putUpdateTest() {
-        UpdateBodyModel authData = new UpdateBodyModel();
+        UserBodyModel authData = new UserBodyModel();
         authData.setName("morpheus");
         authData.setJob("zion resident");
 
         UpdateResponseModel response = step("Make update request", () ->
-        given(updateRequestSpec)
+        given(requestSpec)
                 .body(authData)
                 .when()
                 .put("/users/2")
                 .then()
-                .spec(updateResponseSpec)
+                .spec(responseSpec)
                 .extract().as(UpdateResponseModel.class));
 
         step("Verify Results", () -> {
-            assertEquals("morpheus", response.getName());
-            assertEquals("zion resident", response.getJob());
+            assertThat(response.getName()).isEqualTo("morpheus");
+            assertThat(response.getJob()).isEqualTo("zion resident");
         });
     }
 
@@ -101,12 +96,12 @@ public class ReqresInTests extends TestBase{
     @Test
     void createUser(){
 
-        CreateBodyModel authDate = new CreateBodyModel();
+        UserBodyModel authDate = new UserBodyModel();
         authDate.setName("morpheus");
         authDate.setJob("leader");
 
         CreateResponseModel response = step("Make user request", () ->
-        given(createUserRequestSpec)
+        given(requestSpec)
                 .body(authDate)
                 .when()
                 .post("/users")
@@ -128,7 +123,7 @@ public class ReqresInTests extends TestBase{
         authData.setEmail("sydney@fife");
 
         RegisterResponseModel response = step("Make request", () ->
-        given(registerRequestSpec)
+        given(requestSpec)
                 .body(authData)
                 .when()
                 .post("/register")
@@ -136,6 +131,7 @@ public class ReqresInTests extends TestBase{
                 .spec(registerResponseSpec)
                 .extract().as(RegisterResponseModel.class));
 
-        assertEquals("Missing email or username", response.getError());
+        step("Verify results", () ->
+                assertThat(response.getError()).isEqualTo("Missing password"));
     }
 }

@@ -3,6 +3,6 @@ package in.reqres.models;
 import lombok.Data;
 
 @Data
-public class CreateBodyModel {
+public class UserBodyModel {
     private String name, job;
 }
